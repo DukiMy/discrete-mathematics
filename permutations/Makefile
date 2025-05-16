@@ -1,15 +1,17 @@
 CC = gcc
 CFLAGS = -Wall
-TARGET = charIO
+TARGET = permutations.exe
+SRC = permutations.c
+OBJ = permutations.o
 
 all: $(TARGET)
 
-$(TARGET): charIO.o
-	gcc $(CFLAGS) -o $(TARGET) charIO.o
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
 
-charIO.o: charIO.c
-	gcc $(CFLAGS) -c charIO.c
+$(OBJ): $(SRC)
+	$(CC) $(CFLAGS) -c $<
 
 clean:
-	del /Q *.o $(TARGET).exe 2>nul || echo Clean complete
+	del /Q *.o $(TARGET) 2>nul || echo Clean complete
 
