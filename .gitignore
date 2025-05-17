@@ -1,0 +1,49 @@
+# Compiled object files
+*.o
+*.obj
+
+# Executable binaries
+*.exe
+*.out
+*.elf
+*.bin
+
+# Dependency files
+*.d
+
+# Static and shared libraries
+*.a
+*.so
+*.dll
+*.dylib
+
+# Core dumps and debugging
+core
+*.core
+*.stackdump
+
+# Generated files
+*.log
+
+# Precompiled headers
+*.gch
+*.pch
+
+# Editor/IDE files
+*.swp
+*~
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Backup files
+*.bak
+*.tmp
+
+# CMake and build directories (optional)
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile.old
+build/
