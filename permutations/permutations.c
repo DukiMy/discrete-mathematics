@@ -39,7 +39,7 @@ void generate(char *symbols[], int n, int k, char *result[], int depth, Buffer *
             buffer_append(buf, result[i]);
             buffer_append(buf, " ");
         }
-        buffer_append(buf, "\n");
+        buffer_append(buf, "\n\n");
         row++;
         return;
     }
@@ -73,8 +73,7 @@ int main(int argc, char *argv[]) {
     buffer_init(&buf);
     generate(symbols, n, k, result, 0, &buf);
 
-    fprintf(f, "# Output");
-    fprintf(f, "-----------------------\n");
+    fprintf(f, "# Output\n");
     fprintf(f, "-----------------------\n");
     fprintf(f, "%s", buf.data);
     fprintf(f, "-----------------------\n");
