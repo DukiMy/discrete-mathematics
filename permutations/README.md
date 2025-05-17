@@ -3,7 +3,9 @@
 This program generates all possible permutations of a given set of symbols with the given command
 for a specified length `k`, allowing repetition.
 
-`./permutations.exe 4 a b`## Parameters
+`./permutations.exe 4 a b`
+
+## Parameters
 - Length (`k`): `4`
 - Symbols: `a` `b` 
 
