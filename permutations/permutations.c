@@ -76,8 +76,8 @@ int main(int argc, char *argv[]) {
 
     fprintf(f, "# Permutation Generator\n\n");
     fprintf(f, "This program generates all possible permutations of a given set of symbols with the given command\n");
-    fprintf(f, "**./permutations.exe 4 a b**");
     fprintf(f, "for a specified length `k`, allowing repetition.\n\n");
+    fprintf(f, "**./permutations.exe 4 a b**");
 
     fprintf(f, "## Parameters\n");
     fprintf(f, "- Length (`k`): `%d`\n", k);
