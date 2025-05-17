@@ -6,12 +6,13 @@
 #define INITIAL_CAPACITY 4096
 
 // A dynamically growing buffer to hold generated output
-int row = 0;
 typedef struct {
     char *data;
     size_t size;
     size_t capacity;
 } Buffer;
+
+int row = 0;
 
 void buffer_init(Buffer *buf) {
     buf->capacity = INITIAL_CAPACITY;
@@ -39,7 +40,7 @@ void generate(char *symbols[], int n, int k, char *result[], int depth, Buffer *
             buffer_append(buf, result[i]);
             buffer_append(buf, " ");
         }
-        buffer_append(buf, "\n\n");
+        buffer_append(buf, "\n");
         row++;
         return;
     }
@@ -56,28 +57,41 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    FILE *f = fopen("README.md", "w");
-    if (!f) {
-        perror("Failed to open file");
-        return EXIT_FAILURE;
-    }
-
     int k = atoi(argv[1]);
     int n = argc - 2;
     char **symbols = &argv[2];
     unsigned long long count = pow(n, k);
 
     char **result = malloc(sizeof(char *) * k);
-
     Buffer buf;
     buffer_init(&buf);
+
     generate(symbols, n, k, result, 0, &buf);
 
-    fprintf(f, "# Output\n");
-    fprintf(f, "-----------------------\n");
+    FILE *f = fopen("README.md", "w");
+    if (!f) {
+        perror("Failed to open file");
+        return EXIT_FAILURE;
+    }
+
+    fprintf(f, "# Permutation Generator\n\n");
+    fprintf(f, "This program generates all possible permutations of a given set of symbols,\n");
+    fprintf(f, "for a specified length `k`, allowing repetition.\n\n");
+
+    fprintf(f, "## Parameters\n");
+    fprintf(f, "- Length (`k`): `%d`\n", k);
+    fprintf(f, "- Symbols: ");
+    for (int i = 0; i < n; i++) {
+        fprintf(f, "`%s` ", symbols[i]);
+    }
+    fprintf(f, "\n\n");
+
+    fprintf(f, "## Output\n\n");
+    fprintf(f, "```\n");
     fprintf(f, "%s", buf.data);
-    fprintf(f, "-----------------------\n");
-    fprintf(f, "Total permutations: %llu\n", count);
+    fprintf(f, "```\n\n");
+
+    fprintf(f, "**Total permutations**: `%llu`\n", count);
     fclose(f);
 
     free(buf.data);
