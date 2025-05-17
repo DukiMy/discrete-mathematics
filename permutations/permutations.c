@@ -90,9 +90,9 @@ int main(int argc, char *argv[]) {
     fprintf(f, "## Output\n\n");
     fprintf(f, "```\n");
     fprintf(f, "%s", buf.data);
+    fprintf(f, "-----------------------------\n");
+    fprintf(f, "Total permutations: %llu\n", count);
     fprintf(f, "```\n\n");
-
-    fprintf(f, "**Total permutations**: `%llu`\n", count);
     fclose(f);
 
     free(buf.data);

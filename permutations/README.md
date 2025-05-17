@@ -28,6 +28,7 @@ Permutation 13:	b b a a
 Permutation 14:	b b a b 
 Permutation 15:	b b b a 
 Permutation 16:	b b b b 
+-----------------------------
+Total permutations: 16
 ```
 
-**Total permutations**: `16`
