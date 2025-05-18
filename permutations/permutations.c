@@ -29,6 +29,30 @@ int input_length(char *input_line) {
     return atoi(input_line);
 }
 
+static void recurse(char *symbols[], int n, int k, char *result[], char **permutations, int depth, int *row) {
+    if (depth == k) {
+        char *line = malloc((k > 0 ? k : 1) * MAX_LENGTH);
+        if (!line) {
+            perror("malloc failed");
+            exit(EXIT_FAILURE);
+        }
+        line[0] = '\0';
+
+        for (int i = 0; i < k; i++) {
+            strcat(line, result[i]);
+            if (i < k - 1) strcat(line, " ");
+        }
+
+        permutations[(*row)++] = line;
+        return;
+    }
+
+    for (int i = 0; i < n; i++) {
+        result[depth] = symbols[i];
+        recurse(symbols, n, k, result, permutations, depth + 1, row);
+    }
+}
+
 char **generate(char *symbols[], int n, int k, int *total) {
     if (k <= 0 || n <= 0) {
         *total = 0;
@@ -39,43 +63,11 @@ char **generate(char *symbols[], int n, int k, int *total) {
     *total = (int)count;
 
     char **permutations = malloc(sizeof(char *) * count);
-    if (!permutations) {
-        perror("malloc failed");
-        exit(EXIT_FAILURE);
-    }
-
     char **result = malloc(sizeof(char *) * k);
-    if (!result) {
-        perror("malloc failed");
-        exit(EXIT_FAILURE);
-    }
-
     int row = 0;
 
-    void recurse(int depth) {
-        if (depth == k) {
-            // Allocate string buffer for one permutation
-            char *line = malloc((k > 0 ? k : 1) * MAX_LENGTH);
-            if (!line) {
-                perror("malloc failed");
-                exit(EXIT_FAILURE);
-            }
-            line[0] = '\0';
+    recurse(symbols, n, k, result, permutations, 0, &row);
 
-            for (int i = 0; i < k; i++) {
-                strcat(line, result[i]);
-                if (i < k - 1) strcat(line, " ");
-            }
-            permutations[row++] = line;
-            return;
-        }
-        for (int i = 0; i < n; i++) {
-            result[depth] = symbols[i];
-            recurse(depth + 1);
-        }
-    }
-
-    recurse(0);
     free(result);
     return permutations;
 }
