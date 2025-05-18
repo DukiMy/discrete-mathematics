@@ -3,99 +3,123 @@
 #include <string.h>
 #include <math.h>
 
-#define INITIAL_CAPACITY 4096
+#define MAX_SYMBOLS 100
+#define MAX_LENGTH 100
 
-// A dynamically growing buffer to hold generated output
-typedef struct {
-    char *data;
-    size_t size;
-    size_t capacity;
-} Buffer;
+int input_symbols(char *input_line, char *symbols[]) {
+    int symbol_count = 0;
+    char *token;
 
-int row = 0;
+    printf("Input space-separated symbols: ");
+    fgets(input_line, MAX_LENGTH, stdin);
+    input_line[strcspn(input_line, "\n")] = '\0';
+    token = strtok(input_line, " ");
 
-void buffer_init(Buffer *buf) {
-    buf->capacity = INITIAL_CAPACITY;
-    buf->size = 0;
-    buf->data = malloc(buf->capacity);
-    buf->data[0] = '\0';
-}
-
-void buffer_append(Buffer *buf, const char *str) {
-    size_t len = strlen(str);
-    if (buf->size + len + 1 >= buf->capacity) {
-        buf->capacity *= 2;
-        buf->data = realloc(buf->data, buf->capacity);
+    while (token != NULL && symbol_count < MAX_SYMBOLS) {
+        symbols[symbol_count++] = strdup(token);
+        token = strtok(NULL, " ");
     }
-    strcpy(buf->data + buf->size, str);
-    buf->size += len;
+
+    return symbol_count;
 }
 
-void generate(char *symbols[], int n, int k, char *result[], int depth, Buffer *buf) {
-    if (depth == k) {
-        char temp[64];
-        snprintf(temp, sizeof(temp), "Permutation %d:\t", row + 1);
-        buffer_append(buf, temp);
-        for (int i = 0; i < k; i++) {
-            buffer_append(buf, result[i]);
-            buffer_append(buf, " ");
+int input_length(char *input_line) {
+    printf("Input length of permutations (k): ");
+    fgets(input_line, MAX_LENGTH, stdin);
+    return atoi(input_line);
+}
+
+char **generate(char *symbols[], int n, int k, int *total) {
+    if (k <= 0 || n <= 0) {
+        *total = 0;
+        return NULL;
+    }
+
+    unsigned long long count = (unsigned long long)pow(n, k);
+    *total = (int)count;
+
+    char **permutations = malloc(sizeof(char *) * count);
+    if (!permutations) {
+        perror("malloc failed");
+        exit(EXIT_FAILURE);
+    }
+
+    char **result = malloc(sizeof(char *) * k);
+    if (!result) {
+        perror("malloc failed");
+        exit(EXIT_FAILURE);
+    }
+
+    int row = 0;
+
+    void recurse(int depth) {
+        if (depth == k) {
+            // Allocate string buffer for one permutation
+            char *line = malloc((k > 0 ? k : 1) * MAX_LENGTH);
+            if (!line) {
+                perror("malloc failed");
+                exit(EXIT_FAILURE);
+            }
+            line[0] = '\0';
+
+            for (int i = 0; i < k; i++) {
+                strcat(line, result[i]);
+                if (i < k - 1) strcat(line, " ");
+            }
+            permutations[row++] = line;
+            return;
         }
-        buffer_append(buf, "\n");
-        row++;
+        for (int i = 0; i < n; i++) {
+            result[depth] = symbols[i];
+            recurse(depth + 1);
+        }
+    }
+
+    recurse(0);
+    free(result);
+    return permutations;
+}
+
+char **create_task(int *out_count) {
+    char input_line[MAX_LENGTH];
+    char *symbols[MAX_SYMBOLS];
+
+    int symbol_count = input_symbols(input_line, symbols);
+    int k = input_length(input_line);
+
+    if (symbol_count <= 0 || k <= 0) {
+        fprintf(stderr, "Invalid input. Aborting.\n");
+        *out_count = 0;
+        return NULL;
+    }
+
+    printf("\nGenerating permutations of length %d from %d symbols:\n", k, symbol_count);
+    char **perms = generate(symbols, symbol_count, k, out_count);
+
+    for (int i = 0; i < symbol_count; i++) {
+        free(symbols[i]);
+    }
+
+    return perms;
+}
+
+void tasks_do(char **perms, int count) {
+    if (!perms || count <= 0) {
+        printf("No permutations to display.\n");
         return;
     }
 
-    for (int i = 0; i < n; i++) {
-        result[depth] = symbols[i];
-        generate(symbols, n, k, result, depth + 1, buf);
+    for (int i = 0; i < count; i++) {
+        printf("%d:\t%s\n", i + 1, perms[i]);
+        free(perms[i]);
     }
+    free(perms);
 }
 
-int main(int argc, char *argv[]) {
-    if (argc < 3) {
-        fprintf(stderr, "Usage: %s <length> <symbols...>\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    int k = atoi(argv[1]);
-    int n = argc - 2;
-    char **symbols = &argv[2];
-    unsigned long long count = pow(n, k);
-
-    char **result = malloc(sizeof(char *) * k);
-    Buffer buf;
-    buffer_init(&buf);
-
-    generate(symbols, n, k, result, 0, &buf);
-
-    FILE *f = fopen("README.md", "w");
-    if (!f) {
-        perror("Failed to open file");
-        return EXIT_FAILURE;
-    }
-
-    fprintf(f, "# Permutation Generator\n\n");
-    fprintf(f, "This program generates all possible permutations of a given set of symbols with the given command\n");
-    fprintf(f, "for a specified length `k`, allowing repetition.\n\n");
-    fprintf(f, "`./permutations.exe 4 a b`\n\n");
-
-    fprintf(f, "## Parameters\n");
-    fprintf(f, "- Length (`k`): `%d`\n", k);
-    fprintf(f, "- Symbols: ");
-    for (int i = 0; i < n; i++) {
-        fprintf(f, "`%s` ", symbols[i]);
-    }
-    fprintf(f, "\n\n");
-
-    fprintf(f, "## Output\n\n");
-    fprintf(f, "```\n");
-    fprintf(f, "%s", buf.data);
-    fprintf(f, "-----------------------------\n");
-    fprintf(f, "Total permutations: %llu\n", count);
-    fprintf(f, "```\n\n");
-    fclose(f);
-
-    free(buf.data);
-    free(result);
+int main() {
+    int count;
+    char **results = create_task(&count);
+    tasks_do(results, count);
+    free(results);
     return EXIT_SUCCESS;
 }
