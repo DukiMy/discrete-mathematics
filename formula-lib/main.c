@@ -5,7 +5,7 @@
 void print_menu() {
   printf("\n=== Formula Library Menu ===\n");
   printf("1. Permutate\n");
-  printf("2. Formula 2\n");
+  printf("2. Factorialize\n");
   printf("10. Formula 10\n");
   printf("0. Exit\n");
   printf("Select an option: ");
@@ -27,7 +27,10 @@ int main(void) {
 
         /* Present case */
         printf("\n=== Calcualate permutations ===\n");
-        printf("n = candidates\n");
+        printf("A linear arrangement of distinct objects.\n");
+        printf("e.g. 1, 2, 3, ...\n");
+        printf("not 1, 1, 2, ...\n");
+        printf("n = distinct candidates\n");
         printf("r = positions\n");
         printf("P(n,r) = n!/(n - r)!\n");
 
@@ -49,6 +52,8 @@ int main(void) {
         printf("P(%d, %d) = %llu possible permutations\n", n, r, permutation(n, r));
 
         /* End case */
+        getchar();
+        getchar();
         break;
 
       case 2: /* Factorial */
@@ -69,6 +74,8 @@ int main(void) {
         printf("P(%d) = %llu\n", n, factorial(n));
 
         /* End case */
+        getchar();
+        getchar();
         break;
       case 10:
         formula_10();
