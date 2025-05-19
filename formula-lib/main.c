@@ -13,6 +13,7 @@ void print_menu() {
 
 int main(void) {
   int choice;
+  int n, r;
 
   while (1) {
     print_menu();
@@ -22,43 +23,52 @@ int main(void) {
     }
 
     switch (choice) {
-      case 1:
-        int n, r;
+      case 1: /* Permutations */
 
+        /* Present case */
         printf("\n=== Calcualate permutations ===\n");
         printf("n = candidates\n");
         printf("r = positions\n");
         printf("P(n,r) = n!/(n - r)!\n");
 
+        /* Take input */
         printf("Enter value for n: ");
         if (scanf("%d", &n) != 1 || n < 0) {
           printf("Invalid input for n.\n");
           break;
         }
 
+        /* Take input */
         printf("Enter value for r: ");
         if (scanf("%d", &r) != 1 || r < 0 || r > n) {
           printf("Invalid input for r (must be 0 <= r <= n).\n");
           break;
         }
 
+        /* Present result */
         printf("P(%d, %d) = %llu possible permutations\n", n, r, permutation(n, r));
+
+        /* End case */
         break;
 
-      case 2:
-        int n;
+      case 2: /* Factorial */
 
+        /* Present case */
         printf("\n=== Calcualate factorial ===\n");
         printf("n = number to factorialize\n");
         printf("F(n) = n!\n");
 
+        /* Take input */
         printf("Enter value for n: ");
         if (scanf("%d", &n) != 1 || n < 0) {
           printf("Invalid input for n.\n");
           break;
         }
 
-        factorial(n);
+        /* Present result */
+        printf("P(%d) = %llu\n", n, factorial(n));
+
+        /* End case */
         break;
       case 10:
         formula_10();
